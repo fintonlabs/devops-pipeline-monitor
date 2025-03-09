@@ -1,17 +1,19 @@
 import unittest
-from unittest.mock import patch
-from main import get_last_build_status
+from main import app
 
 class TestMain(unittest.TestCase):
+    def setUp(self):
+        self.app = app.test_client()
 
-    @patch('main.requests.get')
-    def test_get_last_build_status(self, mock_get):
-        mock_response = mock_get.return_value
-        mock_response.json.return_value = {'result': 'SUCCESS'}
+    def test_get_pipelines(self):
+        response = self.app.get('/pipelines')
+        self.assertEqual(response.status_code, 200)
 
-        status = get_last_build_status()
+    def test_post_pipelines(self):
+        response = self.app.post('/pipelines', json={})
+        self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(status, 'SUCCESS')
+    # Add more tests as needed
 
 if __name__ == '__main__':
     unittest.main()
